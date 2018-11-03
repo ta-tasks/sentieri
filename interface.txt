@@ -1,0 +1,14 @@
+const MAXN = 100;
+const MAXM = 1000;
+
+function shortest_path(N, M, a[], b[], c[]);
+
+main {
+    read N, M;
+    for i to M {
+        read a[i], b[i], c[i];
+    }
+
+    call res = shortest_path(N, M, a, b, c);
+    write res;
+}
