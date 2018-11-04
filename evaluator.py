@@ -28,25 +28,30 @@ for N, M in testcases:
     while len(graph.edges()) < M:
         graph.add_edges_from(nx.gnm_random_graph(N, M - len(graph.edges())).edges())
 
-    weights = [random.randint(0, 1) for i in range(len(graph.edges()))]
+    for u, v, d in graph.edges(data=True):
+        d["weight"] = random.randint(0, 1)
 
     assert len(graph.nodes()) <= MAXN
     assert len(graph.edges()) <= MAXM
     assert nx.is_connected(graph)
 
-    with ta.run_algorithm("solutions/correct.cpp") as p:
-        correct_output = p.functions.shortest_path(
-            len(graph.nodes()),
-            len(graph.edges()),
-            *zip(*graph.edges()),
-            weights)
+    #with ta.run_algorithm("solutions/correct.cpp") as p:
+    #    correct_output = p.functions.shortest_path(
+    #        len(graph.nodes()),
+    #        len(graph.edges()),
+    #        [u for u, v, w in graph.edges(data="weight")],
+    #        [v for u, v, w in graph.edges(data="weight")],
+    #        [w for u, v, w in graph.edges(data="weight")])
+
+    correct_output = nx.dijkstra_path_length(graph, 0, len(graph.nodes()) - 1)
 
     with ta.run_algorithm(submitted_solution) as p:
         output = p.functions.shortest_path(
             len(graph.nodes()),
             len(graph.edges()),
-            *zip(*graph.edges()),
-            weights)
+            [u for u, v, w in graph.edges(data="weight")],
+            [v for u, v, w in graph.edges(data="weight")],
+            [w for u, v, w in graph.edges(data="weight")])
 
     if output == correct_output:
         print("correct! (%d == %d)" % (output, correct_output))
